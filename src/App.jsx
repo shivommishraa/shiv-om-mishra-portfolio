@@ -1,0 +1,560 @@
+import { useEffect, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+} from "framer-motion";
+import {
+  Link,
+  NavLink,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
+
+const emailAddress = "your-email@example.com";
+
+const skills = [
+  { icon: "M", name: "Magento 2", note: "E-commerce development", color: "orange" },
+  { icon: "</>", name: "PHP", note: "Backend development", color: "blue" },
+  { icon: "L", name: "Laravel", note: "Web applications", color: "red" },
+  { icon: "JS", name: "JavaScript", note: "Interactive interfaces", color: "yellow" },
+  { icon: "Py", name: "Python", note: "Automation and AI", color: "cyan" },
+  { icon: "F", name: "Flutter", note: "Cross-platform apps", color: "sky" },
+  { icon: "DB", name: "MySQL", note: "Data and databases", color: "teal" },
+  { icon: "Git", name: "Git", note: "Version control", color: "violet" },
+];
+
+const projects = [
+  {
+    name: "SSG MART",
+    description: "Grocery store brand and digital shopping concept.",
+    category: "E-commerce",
+    art: "mart",
+    mark: "SSG",
+    title: "MART",
+    subtitle: "GROCERY & ESSENTIALS",
+    tags: ["Branding", "E-commerce"],
+  },
+  {
+    name: "Magento AI Assistant",
+    description: "AI-assisted product description module concept.",
+    category: "AI & E-commerce",
+    art: "ai",
+    mark: "✳",
+    title: "AI",
+    subtitle: "PRODUCT DESCRIPTION",
+    tags: ["Magento 2", "PHP", "AI"],
+  },
+  {
+    name: "College CMS",
+    description: "Learning project for college administration workflows.",
+    category: "Web application",
+    art: "cms",
+    mark: "▦",
+    title: "CMS",
+    subtitle: "COLLEGE MANAGEMENT",
+    tags: ["Laravel", "CRUD"],
+  },
+];
+
+const services = [
+  {
+    icon: "⌘",
+    title: "Web Development",
+    description: "Responsive, accessible websites and web applications.",
+  },
+  {
+    icon: "◈",
+    title: "Magento Development",
+    description: "Store customizations, modules and e-commerce support.",
+  },
+  {
+    icon: "↔",
+    title: "API Integration",
+    description: "Connecting platforms and streamlining data workflows.",
+  },
+  {
+    icon: "⚙",
+    title: "Maintenance & Support",
+    description: "Improvements, troubleshooting and ongoing website care.",
+  },
+];
+
+function Reveal({ children, className = "", delay = 0 }) {
+  const reduceMotion = useReducedMotion();
+  return (
+    <motion.div
+      className={className}
+      initial={reduceMotion ? false : { opacity: 0, y: 22 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function Brand() {
+  return (
+    <Link className="brand" to="/" aria-label="Shiv Om Mishra home">
+      <span className="brand-mark">
+        S<span>O</span>M
+      </span>
+      <span className="brand-copy">
+        Shiv Om Mishra
+        <small>Full Stack Developer</small>
+      </span>
+    </Link>
+  );
+}
+
+function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => setMenuOpen(false), [location.pathname]);
+
+  return (
+    <header className="site-header">
+      <Brand />
+      <button
+        className="menu-toggle"
+        type="button"
+        aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((open) => !open)}
+      >
+        <span />
+        <span />
+      </button>
+      <nav className={`nav${menuOpen ? " open" : ""}`} aria-label="Main navigation">
+        {[
+          ["Home", "/"],
+          ["About", "/about"],
+          ["Projects", "/projects"],
+          ["Contact", "/contact"],
+        ].map(([label, path]) => (
+          <NavLink
+            key={path}
+            to={path}
+            end={path === "/"}
+            className={({ isActive }) => (isActive ? "active" : "")}
+            onClick={() => setMenuOpen(false)}
+          >
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+      <Link className="button button-outline header-cta" to="/contact">
+        Let&apos;s talk <span aria-hidden="true">↗</span>
+      </Link>
+    </header>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="footer section-wrap">
+      <Brand />
+      <p>Designed &amp; built with curiosity. © {new Date().getFullYear()} Shiv Om Mishra.</p>
+      <Link to="/" className="back-top">
+        Back to top ↑
+      </Link>
+    </footer>
+  );
+}
+
+function SectionHeading({ kicker, title, highlight, description }) {
+  return (
+    <div className="section-heading">
+      <div>
+        <p className="section-kicker">{kicker}</p>
+        <h2>
+          {title} <span className="gradient-text">{highlight}</span>
+        </h2>
+      </div>
+      {description && <p>{description}</p>}
+    </div>
+  );
+}
+
+function ProjectCard({ project, index = 0 }) {
+  return (
+    <Reveal delay={index * 0.08}>
+      <article className="project-card">
+        <div className={`project-art ${project.art}-art`}>
+          <span>{project.mark}</span>
+          <b>{project.title}</b>
+          <small>{project.subtitle}</small>
+          <span className="art-orb" aria-hidden="true" />
+        </div>
+        <div className="project-info">
+          <div>
+            <p className="project-category">{project.category}</p>
+            <h3>{project.name}</h3>
+            <p>{project.description}</p>
+          </div>
+          <span className="project-arrow" aria-hidden="true">↗</span>
+        </div>
+        <div className="tags">
+          {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
+        </div>
+      </article>
+    </Reveal>
+  );
+}
+
+function SkillGrid({ limit }) {
+  const visibleSkills = limit ? skills.slice(0, limit) : skills;
+  return (
+    <motion.div className="skills-grid" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.1 }}>
+      {visibleSkills.map((skill) => (
+        <motion.article className="skill-card" variants={cardMotion} key={skill.name}>
+          <span className={`skill-icon ${skill.color}`}>{skill.icon}</span>
+          <h3>{skill.name}</h3>
+          <p>{skill.note}</p>
+        </motion.article>
+      ))}
+    </motion.div>
+  );
+}
+
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07 } },
+};
+
+const cardMotion = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
+
+function HomePage() {
+  const reduceMotion = useReducedMotion();
+  const roles = ["Full Stack Developer", "Magento Developer", "Web Enthusiast"];
+  const [roleIndex, setRoleIndex] = useState(0);
+
+  useEffect(() => {
+    if (reduceMotion) return undefined;
+    const timer = window.setInterval(() => {
+      setRoleIndex((index) => (index + 1) % roles.length);
+    }, 2400);
+    return () => window.clearInterval(timer);
+  }, [reduceMotion, roles.length]);
+
+  return (
+    <>
+      <section className="hero section-wrap">
+        <motion.div
+          className="hero-copy"
+          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <p className="eyebrow"><span className="status-dot" /> AVAILABLE FOR OPPORTUNITIES</p>
+          <p className="hello">Hello, I&apos;m <span className="wave" aria-hidden="true">👋</span></p>
+          <h1>Shiv Om <span className="gradient-text">Mishra</span></h1>
+          <h2 className="role-line" aria-live="polite">
+            {roles[roleIndex]}<i className="typing-caret" aria-hidden="true" />
+          </h2>
+          <p className="hero-description">
+            I build thoughtful digital experiences, scalable web applications and
+            e-commerce solutions that turn ideas into reality.
+          </p>
+          <div className="hero-actions">
+            <Link className="button button-primary" to="/projects">Explore my work <span>↗</span></Link>
+            <Link className="button button-outline" to="/contact">Contact me</Link>
+          </div>
+          <div className="social-links">
+            <a href="https://www.linkedin.com/" aria-label="LinkedIn">in</a>
+            <a href="https://github.com/" aria-label="GitHub">⌘</a>
+            <a href={`mailto:${emailAddress}`} aria-label="Email">✉</a>
+          </div>
+        </motion.div>
+        <motion.div
+          className="hero-art"
+          initial={reduceMotion ? false : { opacity: 0, scale: 0.94 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.85, delay: 0.12 }}
+          aria-label="Decorative developer illustration"
+        >
+          <div className="orbit orbit-one" />
+          <div className="orbit orbit-two" />
+          <div className="code-float code-one">&lt;/&gt;</div>
+          <div className="code-float code-two">{"{ }"}</div>
+          <div className="profile-placeholder">
+            <div className="profile-initials">SOM</div>
+            <span>YOUR PHOTO HERE</span>
+          </div>
+          <div className="floating-card">
+            <span className="mini-icon">✦</span>
+            <div><b>Clean code.</b><small>Creative solutions.</small></div>
+          </div>
+          <div className="art-caption">CODE<br />CREATE<br /><em>INNOVATE.</em></div>
+        </motion.div>
+        <div className="scroll-note">SCROLL TO EXPLORE <span>↓</span></div>
+      </section>
+
+      <Reveal className="about panel section-wrap">
+        <div className="about-text">
+          <p className="section-kicker">01 / A LITTLE ABOUT ME</p>
+          <h2>Turning ideas into<br /><span className="gradient-text">digital reality.</span></h2>
+          <p>
+            I&apos;m Shiv Om Mishra, a developer passionate about building useful,
+            reliable and user-friendly digital products. My work spans e-commerce
+            development, backend integrations and modern web technologies.
+          </p>
+          <p>I enjoy solving real-world problems, learning new tools and creating experiences that feel as good as they work.</p>
+          <Link className="text-link" to="/about">More about me <span>→</span></Link>
+        </div>
+        <CodeWindow />
+      </Reveal>
+
+      <section className="section-wrap section-block">
+        <SectionHeading
+          kicker="02 / WHAT I WORK WITH"
+          title="Technical"
+          highlight="toolkit."
+          description="Tools and technologies I use to bring products to life."
+        />
+        <SkillGrid limit={4} />
+        <Link className="text-link section-more" to="/about">Explore all skills <span>→</span></Link>
+      </section>
+
+      <section className="section-wrap section-block projects-preview">
+        <SectionHeading
+          kicker="03 / SELECTED WORK"
+          title="Featured"
+          highlight="projects."
+          description="A few ideas and builds from my development journey."
+        />
+        <div className="project-grid">
+          {projects.map((project, index) => <ProjectCard key={project.name} project={project} index={index} />)}
+        </div>
+        <Link className="text-link section-more" to="/projects">View all projects <span>→</span></Link>
+      </section>
+
+      <Callout />
+    </>
+  );
+}
+
+function CodeWindow() {
+  return (
+    <div className="about-visual">
+      <div className="glass-code">
+        <div className="window-dots"><i /><i /><i /></div>
+        <pre><span className="code-purple">const</span> developer = {"{"}
+{"\n"}  name: <span className="code-green">&quot;Shiv Om Mishra&quot;</span>,
+{"\n"}  focus: <span className="code-green">&quot;Web Development&quot;</span>,
+{"\n"}  passion: <span className="code-green">&quot;Building solutions&quot;</span>,
+{"\n"}  mindset: <span className="code-green">&quot;Always learning&quot;</span>
+{"\n"}{"};"}</pre>
+        <div className="code-glow" />
+      </div>
+      <div className="tech-chip chip-php">PHP</div>
+      <div className="tech-chip chip-js">JS</div>
+      <div className="tech-chip chip-magento">M2</div>
+    </div>
+  );
+}
+
+function AboutPage() {
+  return (
+    <PageShell kicker="A LITTLE ABOUT ME" title="Curious by nature." highlight="Developer by choice.">
+      <Reveal className="about panel about-page-card">
+        <div className="about-text">
+          <p className="section-kicker">MY APPROACH</p>
+          <h2>Building useful things,<br /><span className="gradient-text">one detail at a time.</span></h2>
+          <p>
+            I&apos;m Shiv Om Mishra, a developer passionate about creating useful,
+            reliable and user-friendly digital products. My work spans e-commerce
+            development, backend integrations and modern web technologies.
+          </p>
+          <p>
+            I enjoy solving real-world problems, learning new tools and making
+            digital experiences feel as good as they work.
+          </p>
+        </div>
+        <CodeWindow />
+      </Reveal>
+      <section className="section-block">
+        <SectionHeading kicker="01 / MY TOOLKIT" title="Tools for" highlight="building." description="A practical mix of technologies for turning ideas into working products." />
+        <SkillGrid />
+      </section>
+      <Reveal className="journey panel">
+        <div>
+          <p className="section-kicker">02 / THE JOURNEY</p>
+          <h2>Experience &amp; <span className="gradient-text">growth.</span></h2>
+        </div>
+        <div className="timeline">
+          <div className="timeline-item">
+            <span className="timeline-dot" />
+            <small>PROFESSIONAL EXPERIENCE</small>
+            <h3>Web Developer</h3>
+            <p>Working on web development, CMS updates, e-commerce solutions and website improvements.</p>
+          </div>
+          <div className="timeline-item">
+            <span className="timeline-dot" />
+            <small>CONTINUOUS LEARNING</small>
+            <h3>Building &amp; experimenting</h3>
+            <p>Exploring AI integrations, modern frameworks and practical application development.</p>
+          </div>
+        </div>
+      </Reveal>
+      <Callout />
+    </PageShell>
+  );
+}
+
+function ProjectsPage() {
+  return (
+    <PageShell kicker="A FEW THINGS I'VE WORKED ON" title="Ideas made" highlight="real.">
+      <section className="projects-page-content">
+        <div className="project-grid project-grid-large">
+          {projects.map((project, index) => <ProjectCard key={project.name} project={project} index={index} />)}
+        </div>
+        <Reveal className="project-note panel">
+          <span className="note-icon">✳</span>
+          <div>
+            <p className="section-kicker">ALWAYS BUILDING</p>
+            <h2>Have an idea in mind?</h2>
+            <p>I&apos;m always interested in thoughtful projects and new ways to solve real problems.</p>
+          </div>
+          <Link className="button button-primary" to="/contact">Let&apos;s talk <span>↗</span></Link>
+        </Reveal>
+      </section>
+    </PageShell>
+  );
+}
+
+function ContactPage() {
+  const [sent, setSent] = useState(false);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const subject = encodeURIComponent(`Portfolio enquiry from ${formData.get("name")}`);
+    const body = encodeURIComponent(
+      `Name: ${formData.get("name")}\nEmail: ${formData.get("email")}\n\n${formData.get("message")}`,
+    );
+    window.location.href = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
+    setSent(true);
+  }
+
+  return (
+    <PageShell kicker="LET'S MAKE SOMETHING GOOD" title="Have a project in" highlight="mind?">
+      <div className="contact-layout">
+        <Reveal className="contact-copy panel">
+          <span className="contact-sparkle" aria-hidden="true">✦</span>
+          <p className="section-kicker">GET IN TOUCH</p>
+          <h2>Good things start with a <span className="gradient-text">hello.</span></h2>
+          <p>Tell me a little about what you&apos;re working on. I&apos;d love to hear about your idea and explore how we can build something great together.</p>
+          <a className="contact-email" href={`mailto:${emailAddress}`}>{emailAddress}<span>↗</span></a>
+          <div className="contact-socials">
+            <a href="https://www.linkedin.com/">LinkedIn ↗</a>
+            <a href="https://github.com/">GitHub ↗</a>
+          </div>
+        </Reveal>
+        <Reveal className="contact-form-wrap panel" delay={0.1}>
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="name">Your name</label>
+            <input id="name" name="name" type="text" placeholder="How should I call you?" required />
+            <label htmlFor="email">Email address</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" required />
+            <label htmlFor="message">Tell me about your project</label>
+            <textarea id="message" name="message" rows="5" placeholder="A few details about your idea..." required />
+            <button className="button button-primary" type="submit">Send a message <span>↗</span></button>
+            {sent && <p className="form-note" role="status">Your email app should open with the message ready to send.</p>}
+          </form>
+        </Reveal>
+      </div>
+    </PageShell>
+  );
+}
+
+function PageShell({ kicker, title, highlight, children }) {
+  return (
+    <div className="inner-page section-wrap">
+      <Reveal className="page-intro">
+        <p className="eyebrow"><span className="status-dot" /> {kicker}</p>
+        <h1>{title}<br /><span className="gradient-text">{highlight}</span></h1>
+      </Reveal>
+      {children}
+    </div>
+  );
+}
+
+function Callout() {
+  return (
+    <Reveal className="contact panel section-wrap">
+      <div>
+        <p className="section-kicker">HAVE A PROJECT IN MIND?</p>
+        <h2>Let&apos;s build something <span className="gradient-text">great.</span></h2>
+        <p>Have an idea? Let&apos;s talk about what we can create together.</p>
+      </div>
+      <Link className="button button-primary" to="/contact">Say hello <span>↗</span></Link>
+    </Reveal>
+  );
+}
+
+function AnimatedRoutes() {
+  const location = useLocation();
+  const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  }, [location.pathname, reduceMotion]);
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.main
+        key={location.pathname}
+        initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }}
+        transition={{ duration: reduceMotion ? 0 : 0.28 }}
+      >
+        <Routes location={location}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </motion.main>
+    </AnimatePresence>
+  );
+}
+
+function NotFoundPage() {
+  return (
+    <PageShell kicker="404 / PAGE NOT FOUND" title="This page went" highlight="exploring.">
+      <Link className="button button-primary" to="/">Back to home <span>↗</span></Link>
+    </PageShell>
+  );
+}
+
+export default function App() {
+  const cursorRef = useRef(null);
+
+  useEffect(() => {
+    const handlePointerMove = (event) => {
+      cursorRef.current?.style.setProperty("--cursor-x", `${event.clientX}px`);
+      cursorRef.current?.style.setProperty("--cursor-y", `${event.clientY}px`);
+    };
+    window.addEventListener("pointermove", handlePointerMove);
+    return () => window.removeEventListener("pointermove", handlePointerMove);
+  }, []);
+
+  return (
+    <>
+      <div className="cursor-glow" ref={cursorRef} aria-hidden="true" />
+      <Header />
+      <AnimatedRoutes />
+      <Footer />
+    </>
+  );
+}
